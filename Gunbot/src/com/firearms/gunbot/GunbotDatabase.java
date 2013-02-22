@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Vector;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -17,8 +19,8 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 	private SQLiteDatabase m_database = null;
 	private Context m_context = null;
 
-	public GunbotDatabase(Context context, String name, CursorFactory factory, int version) {
-		super(context, name, factory, version);
+	public GunbotDatabase(Context context) {
+		super(context, "gunbot.db", null, 1);
 		
 		m_context = context;
 	}
@@ -32,6 +34,31 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 
 	}
 	
+	public Vector<GunbotCategory> getCategoryInformation(){
+		open();
+		
+		Cursor catCursor = m_database.rawQuery("SELECT name, id FROM product_categories WHERE parent = 0;", null);
+		Vector<GunbotCategory> categories = new Vector<GunbotCategory>();
+		
+		while (catCursor.moveToNext()){
+			GunbotCategory cat= new GunbotCategory(catCursor.getString(0), catCursor.getInt(1));
+			getSucategoryInformation(cat);
+			categories.add(cat);
+		}
+		
+		catCursor.close();
+		return categories;
+	}
+	
+	private void getSucategoryInformation(GunbotCategory category){
+		Cursor subcatCursor = m_database.rawQuery("SELECT name, url FROM product_categories WHERE parent = ?;", new String[]{String.valueOf(category.getId())});
+		
+		while (subcatCursor.moveToNext())
+			category.AddSubcategory(subcatCursor.getString(0), subcatCursor.getString(1));
+		
+		subcatCursor.close();
+	}
+	
 	private void LoadSchema(String assetPath){
 		try{
 			String sqlStatement;
@@ -40,6 +67,7 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 			BufferedReader br = new BufferedReader(reader);
 			
 			while ((sqlStatement = br.readLine()) != null) {
+				if (sqlStatement.length() > 0)
 				m_database.execSQL(sqlStatement);
 		    }
 		}
@@ -54,7 +82,7 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 	
 	public void open(){
 		if (m_database == null)
-			m_database = getReadableDatabase();
+			m_database = getWritableDatabase();
 	}
 
 }
