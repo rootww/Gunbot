@@ -4,7 +4,7 @@ import java.util.Vector;
 
 public class GunbotProductWatch {
 	private String m_name;
-	private int m_id;
+	private long m_id;
 	private int m_category = 0;
 	
 	private Vector<TextFilter> m_textFilters = new Vector<TextFilter>();
@@ -16,7 +16,7 @@ public class GunbotProductWatch {
 		this(0, name);
 	}
 	
-	public GunbotProductWatch(int id, String name){
+	public GunbotProductWatch(long id, String name){
 		m_id = id;
 		m_name = name;
 	}
@@ -44,7 +44,7 @@ public class GunbotProductWatch {
 		return m_textFilters.lastElement();
 	}
 	
-	public int numTextFilters(){
+	public int getTextFilterCount(){
 		return m_textFilters.size();
 	}
 	
@@ -96,11 +96,11 @@ public class GunbotProductWatch {
 		m_mustBeInStock = mustBeInStock;
 	}
 	
-	public int getId(){
+	public long getId(){
 		return m_id;
 	}
 	
-	public void setId(int id){
+	public void setId(long id){
 		m_id = id;
 	}
 	
@@ -130,6 +130,14 @@ public class GunbotProductWatch {
 			else
 				return !text.toLowerCase().contains(m_filterText);
 			
+		}
+		
+		public int getFilterType(){
+			return m_filterType;
+		}
+		
+		public String getFilterText(){
+			return m_filterText;
 		}
 	}
 }

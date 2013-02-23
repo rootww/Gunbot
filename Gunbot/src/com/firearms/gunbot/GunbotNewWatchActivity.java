@@ -22,14 +22,14 @@ import android.support.v4.app.NavUtils;
 
 public class GunbotNewWatchActivity extends Activity {
 	private static final String Edittext = null;
-	private int m_watchId;
+	private long m_watchId;
 	private GunbotDatabase m_database;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_gunbot_new_watch);
-		m_watchId = getIntent().getIntExtra(GunbotUtils.EXTRA_ID, 0);
+		m_watchId = getIntent().getLongExtra(GunbotUtils.EXTRA_ID, 0);
 
 		
 		GunbotDatabase database = new GunbotDatabase(getApplicationContext());
@@ -141,7 +141,7 @@ public class GunbotNewWatchActivity extends Activity {
 		if (m_database == null)
 			m_database = new GunbotDatabase(getApplicationContext());
 		
-		m_database.SaveProductWatch(productWatch);
+		m_database.saveProductWatch(productWatch);
 	}
 
 }

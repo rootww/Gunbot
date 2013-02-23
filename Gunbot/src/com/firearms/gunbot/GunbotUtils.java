@@ -20,4 +20,18 @@ public class GunbotUtils {
 		
 		return (dollars * 100) + cents;
 	}
+	
+	public static String centsToDollarStr(int cents){
+		int d = cents / 100;
+		int c = cents % 100;
+		
+		StringBuilder str = new StringBuilder("$");
+		str.append(d);
+		str.append('.');
+		if (c < 10)
+			str.append('0');
+		str.append(c);
+		
+		return str.toString();
+	}
 }
