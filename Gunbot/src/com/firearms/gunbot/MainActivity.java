@@ -31,7 +31,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 		
 		GunbotDatabase database = new GunbotDatabase(getApplicationContext());
 		m_categories = database.getCategoryInformation();
-		m_analyzer = new GunbotProductAnalyzer();
+		m_analyzer = new GunbotProductAnalyzer(getApplicationContext());
 		m_productManager = new GunbotProductManager(getApplicationContext(), listView, m_categories, m_analyzer);
 		
 		
