@@ -1,0 +1,23 @@
+<resources>
+<string name="preference_notification_category">Notifications</string>
+    <string name="preference_notification">Receive notifications</string>
+    <string name="preference_notification_sound">Play notification sound</string>
+    <string name="preference_notification_vibrate">Vibrate on notification</string>
+	<string name="preference_refresh_category">Data Refresh</string>    
+    <string name="preference_refresh_interval">Refresh interval</string>
+    <string name="preference_refresh_interval_default">1 minute</string>
+    <string-array name="preference_refresh_interval_entries">
+        <item>30 seconds</item>
+        <item>1 minute</item>
+        <item>2 minutes</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+    </string-array>
+       <string-array name="preference_refresh_interval_values">
+        <item>30000</item>
+        <item>60000</item>
+        <item>120000</item>
+        <item>300000</item>
+        <item>600000</item>
+    </string-array>
+</resources>

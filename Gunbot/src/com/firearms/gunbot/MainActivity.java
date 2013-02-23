@@ -68,6 +68,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 	    	showWatchView();
 	    	return true;
 	    case R.id.menu_settings:
+	    	showSettings();
 	    	return true;
 	    case R.id.menu_refresh:
 	    	m_productManager.refreshProducts(0,m_currentProductType, false);
@@ -100,6 +101,11 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 	
 	private void showWatchView(){
 		Intent intent = new Intent(getApplicationContext(), GunbotWatchViewActivity.class);
+		startActivity(intent);
+	}
+	
+	private void showSettings(){
+		Intent intent = new Intent(getApplicationContext(), GunbotSettingsActivity.class);
 		startActivity(intent);
 	}
 }

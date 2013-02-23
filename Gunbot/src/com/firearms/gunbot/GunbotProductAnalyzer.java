@@ -9,6 +9,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -63,6 +64,9 @@ public class GunbotProductAnalyzer {
 		        .setSmallIcon(android.R.drawable.ic_dialog_alert)
 		        .setContentTitle("New Product Found!")
 		        .setContentText(product.getDescription());
+		
+		        mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+		        mBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
 		
 		Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.gunbot.net".concat(product.getUrl())));
 		PendingIntent resultPendingIntent = PendingIntent.getActivity(m_context, 0, browserIntent, 0);

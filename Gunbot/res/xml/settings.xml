@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory 
+        android:title="@string/preference_notification_category"
+        android:key="preference_notification_category">
+    
+    <CheckBoxPreference
+        android:key="preference_notification"
+        android:title="@string/preference_notification"
+        android:defaultValue="true" />
+    
+    <CheckBoxPreference
+        android:dependency="preference_notification"
+        android:key="preference_notification_sound"
+        android:title="@string/preference_notification_sound"
+        android:defaultValue="true" />
+    
+    <CheckBoxPreference
+        android:dependency="preference_notification"
+        android:key="preference_notification_vibrate"
+        android:title="@string/preference_notification_vibrate"
+        android:defaultValue="true" />
+    
+    </PreferenceCategory>
+    <PreferenceCategory 
+        android:title="@string/preference_refresh_category"
+        android:key="preference_refresh_category">
+    
+     <ListPreference
+        android:key="preference_refresh_interval"
+        android:title="@string/preference_refresh_interval"
+        android:dialogTitle="@string/preference_refresh_interval"
+        android:entries="@array/preference_refresh_interval_entries"
+        android:entryValues="@array/preference_refresh_interval_values"
+        android:defaultValue="@string/preference_refresh_interval_default" />
+        
+    </PreferenceCategory>
+</PreferenceScreen>
