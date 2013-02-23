@@ -6,6 +6,7 @@ import java.util.Vector;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import android.content.Context;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 public class GunbotProductManager {
 	private static final String LOG_TAG = "GunbotProductManager";
 	private static final String GUNBOT_URL = "http://www.gunbot.net";
+	private static final String IN_STOCK_TEXT = "[in stock]";
 	
 	private ListView m_productList = null;
 	private Context m_context = null;
@@ -70,15 +72,13 @@ public class GunbotProductManager {
 		protected Void doInBackground(String... options){
 			try{
 				Document doc = Jsoup.connect(options[0]).get();
-				Elements products = doc.select("td a");
+				Elements products = doc.select("tr");
 				
 				m_currentItems = new Vector<GunbotProduct>();
 				items = new String[products.size()];
 				
 				for (int i = 0; i < products.size(); i++){
-					Element element = products.get(i);
-					
-					GunbotProduct p = new GunbotProduct(element.text(), element.attr("href"));
+					GunbotProduct p = extractProductFromRow(products.get(i));
 					m_currentItems.add(p);
 					
 					items[i] = p.getDescription();
@@ -90,9 +90,20 @@ public class GunbotProductManager {
 			}
 			catch (IOException e){
 				Log.e(DEBUG_TAG, "Error fetching Gunbot Data");
-				Toast.makeText(m_context, "Unable to fetch data from gunbot", Toast.LENGTH_SHORT).show();
+				Toast.makeText(m_context, "Unable to fetch data from Gunbot", Toast.LENGTH_SHORT).show();
 			}
 			return null;
+		}
+		
+		private GunbotProduct extractProductFromRow(Element row){
+			Elements children = row.children();
+			Element product = children.get(0).children().get(0);
+			
+			return new GunbotProduct(product.text(), product.attr("href"), GunbotUtils.priceToCents(children.get(1).text()),GunbotUtils.priceToCents(children.get(2).text()) , itemInStock(children.get(3).text()));
+		}
+		
+		private boolean itemInStock(String stockText){
+			return IN_STOCK_TEXT.equals(stockText);
 		}
 		
 		protected void onPostExecute(Void result){
