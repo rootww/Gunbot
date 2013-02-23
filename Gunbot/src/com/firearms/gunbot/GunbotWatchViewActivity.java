@@ -4,16 +4,21 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,6 +32,9 @@ public class GunbotWatchViewActivity extends ListActivity {
 		
 		initActionBar();
 		
+		ListView listView = getListView();
+		listView.setLongClickable(true);
+		registerForContextMenu(listView);
 	}
 	
 	@Override
@@ -73,6 +81,41 @@ public class GunbotWatchViewActivity extends ListActivity {
 		Intent intent = new Intent(getApplicationContext(), GunbotNewWatchActivity.class);
 		intent.putExtra(GunbotUtils.EXTRA_ID, id);
 		startActivity(intent);
+	}
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo){
+		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+		menu.setHeaderTitle(m_productWatches.get(info.position).getName());
+		menu.add(Menu.NONE, info.position, 0, R.string.menu_delete);
+	}
+	
+	private void deleteListItem(int pos){
+		GunbotProductWatch watch = m_productWatches.remove(pos);
+		new GunbotDatabase(this).deleteProductWatchById(watch.getId());
+		
+		GunbotProductWatchAdapter adapter = (GunbotProductWatchAdapter) getListView().getAdapter();
+		adapter.notifyDataSetChanged();
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item){
+		final int id = item.getItemId();
+		
+		new AlertDialog.Builder(this)
+			.setTitle("Confirm Delete")
+			.setMessage("Do you really want to delete this item?")
+			.setIcon(android.R.drawable.ic_dialog_alert)
+			.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					deleteListItem(id);
+				}
+			})
+			.setNegativeButton(android.R.string.no, null)
+			.show();
+		
+		return true;
 	}
 	
 	private static class GunbotProductWatchAdapter extends ArrayAdapter<GunbotProductWatch>{

@@ -55,7 +55,7 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 	
 	public GunbotProductWatch getProductWatchById(long id){
 		open();
-		Cursor result = m_database.rawQuery("SELECT * from product_watches where id = ?;", new String[]{String.valueOf(id)});
+		Cursor result = m_database.rawQuery("SELECT * FROM product_watches where id = ?;", new String[]{String.valueOf(id)});
 		GunbotProductWatch watch = null;
 		
 		if (result.getCount() > 0){
@@ -65,6 +65,11 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 
 		result.close();
 		return watch;
+	}
+	
+	public void deleteProductWatchById(long id){
+		open();
+		m_database.delete("product_watches","id = ?;", new String[]{String.valueOf(id)});
 	}
 	
 	public List<GunbotProductWatch> getProductWatches(){
