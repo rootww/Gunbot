@@ -144,7 +144,10 @@ public class GunbotNewWatchActivity extends Activity {
 			Spinner filterType = (Spinner) filterRow.getChildAt(0);
 			EditText filterText = (EditText) filterRow.getChildAt(2);
 			
-			productWatch.addTextFilter(filterType.getSelectedItemPosition(), filterText.getText().toString());
+			String txt = filterText.getText().toString();
+			
+			if (txt.length() > 0)
+				productWatch.addTextFilter(filterType.getSelectedItemPosition(), txt);
 		}
 
 		new GunbotDatabase(getApplicationContext()).saveProductWatch(productWatch);
