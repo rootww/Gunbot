@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class GunbotWatchViewActivity extends ListActivity {
@@ -26,6 +27,11 @@ public class GunbotWatchViewActivity extends ListActivity {
 		
 		initActionBar();
 		
+	}
+	
+	@Override
+	protected void onListItemClick (ListView l, View v, int position, long id){
+		showNewWatchActivity(m_productWatches.get(position).getId());
 	}
 	
 	@Override
@@ -51,7 +57,7 @@ public class GunbotWatchViewActivity extends ListActivity {
 			NavUtils.navigateUpFromSameTask(this);
 			return true;
 		case R.id.menu_new_watch:
-			showNewWatchActivity();
+			showNewWatchActivity(0);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -63,8 +69,9 @@ public class GunbotWatchViewActivity extends ListActivity {
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 	
-	private void showNewWatchActivity(){
+	private void showNewWatchActivity(long id){
 		Intent intent = new Intent(getApplicationContext(), GunbotNewWatchActivity.class);
+		intent.putExtra(GunbotUtils.EXTRA_ID, id);
 		startActivity(intent);
 	}
 	

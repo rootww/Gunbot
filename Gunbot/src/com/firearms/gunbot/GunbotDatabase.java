@@ -58,8 +58,10 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 		Cursor result = m_database.rawQuery("SELECT * from product_watches where id = ?;", new String[]{String.valueOf(id)});
 		GunbotProductWatch watch = null;
 		
-		if (result.getCount() > 0)
+		if (result.getCount() > 0){
+			result.moveToNext();
 			watch = getFromCursor(result);
+		}
 
 		result.close();
 		return watch;
@@ -89,7 +91,8 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 		productWatch.setMustBeInStock(cursor.getInt(5) == 1);
 		
 		try {
-			JSONArray filters = new JSONArray(cursor.getString(6));
+			String json = cursor.getString(6);
+			JSONArray filters = new JSONArray(json);
 			
 			for (int i = 0; i < filters.length(); i++){
 				JSONObject filter = filters.getJSONObject(i);
@@ -122,9 +125,12 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 			} catch (JSONException e) {
 				Log.i(LOG_TAG, "JSON encode error: ".concat(e.getMessage()));
 			}
+			
+			filters.put(filter);
 		}
 		
-		values.put("filters", filters.toString());
+		String json = filters.toString();
+		values.put("filters", json);
 		
 		return values;
 	}

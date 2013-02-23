@@ -21,9 +21,7 @@ import android.widget.TextView;
 import android.support.v4.app.NavUtils;
 
 public class GunbotNewWatchActivity extends Activity {
-	private static final String Edittext = null;
 	private long m_watchId;
-	private GunbotDatabase m_database;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +38,9 @@ public class GunbotNewWatchActivity extends Activity {
 		categorySpinner.setAdapter(spinnerArrayAdapter);
 		
 		if (m_watchId != 0)
-			loadDataForExistingWatch();
+			loadDataForExistingWatch(database);
 		else
-			addNewWatch();
+			addNewTextFilter();
 
 		initActionBar();
 	}
@@ -74,24 +72,26 @@ public class GunbotNewWatchActivity extends Activity {
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 	
-	private void addNewWatch(){
+	private void addNewTextFilter(int filterType, String filterText){
+		//TODO: inflate me
 		LinearLayout filterContainer = (LinearLayout)findViewById(R.id.text_filter_container);
-		
 		
 		LinearLayout filterLayout = new LinearLayout(this);
 		filterLayout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-			Spinner filterType = new Spinner(this);
+			Spinner filterTypeSpinner = new Spinner(this);
 			ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.filter_types));
-			filterType.setAdapter(spinnerArrayAdapter);
-			filterLayout.addView(filterType);
+			filterTypeSpinner.setAdapter(spinnerArrayAdapter);
+			filterTypeSpinner.setSelection(filterType);
+			filterLayout.addView(filterTypeSpinner);
 			
 			TextView filterLabel = new TextView(this);
 			filterLabel.setText(R.string.label_filter_text);
 			filterLayout.addView(filterLabel);
 			
-			EditText filterText = new EditText(this);
-			filterText.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1.0f));
-			filterLayout.addView(filterText);
+			EditText filterTextSpinner = new EditText(this);
+			filterTextSpinner.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1.0f));
+			filterTextSpinner.setText(filterText);
+			filterLayout.addView(filterTextSpinner);
 			
 			Button removeButton = new Button(this);
 			removeButton.setText(R.string.label_filter_remove);
@@ -104,44 +104,71 @@ public class GunbotNewWatchActivity extends Activity {
 			filterLayout.addView(removeButton);
 
 			filterContainer.addView(filterLayout);
-			
+	}
+	
+	private void addNewTextFilter(){
+		addNewTextFilter(0, "");
 	}
 	
 	public void onAddFilterClick(View view){
-		addNewWatch();
+		addNewTextFilter();
 	}
 	
-	private void loadDataForExistingWatch(){
+	private void loadDataForExistingWatch(GunbotDatabase database){
+		ProductWatchWidgets widgets = getWatchWidgets();
+		GunbotProductWatch watch = database.getProductWatchById(m_watchId);
 		
+		widgets.nameText.setText(watch.getName());
+		widgets.categorySpinner.setSelection(watch.getCategory());
+		widgets.inStockCheckbox.setChecked(watch.getMustBeInStock());
+		widgets.maxPerRoundText.setText(GunbotUtils.centsToDollarStr(watch.getMaxPricePerRound()));
+		widgets.maxPriceText.setText(GunbotUtils.centsToDollarStr(watch.getMaxPrice()));
+		
+		for (int i = 0; i < watch.getTextFilterCount(); i++){
+			GunbotProductWatch.TextFilter filter = watch.getTextFilter(i);
+			addNewTextFilter(filter.getFilterType(), filter.getFilterText());
+		}
 	}
 	
 	private void saveWatch(){
-		EditText nameText = (EditText) findViewById(R.id.watch_name);
-		Spinner categorySpinner = (Spinner) findViewById(R.id.watch_category);
-		CheckBox inStockCheckbox = (CheckBox) findViewById(R.id.watch_in_stock);
-		EditText maxPerRoundText = (EditText) findViewById(R.id.watch_max_price_per_round);
-		EditText maxPriceText = (EditText) findViewById(R.id.watch_max_price);
+		ProductWatchWidgets widgets = getWatchWidgets();
 		
-		GunbotProductWatch productWatch = new GunbotProductWatch(m_watchId, nameText.getText().toString());
-		productWatch.setCategory(categorySpinner.getSelectedItemPosition());
-		productWatch.setMustBeInStock(inStockCheckbox.isChecked());
-		productWatch.setMaxPricePerRound(GunbotUtils.priceToCents(maxPerRoundText.getText().toString()));
-		productWatch.setMaxPrice(GunbotUtils.priceToCents(maxPriceText.getText().toString()));
+		GunbotProductWatch productWatch = new GunbotProductWatch(m_watchId, widgets.nameText.getText().toString());
+		productWatch.setCategory(widgets.categorySpinner.getSelectedItemPosition());
+		productWatch.setMustBeInStock(widgets.inStockCheckbox.isChecked());
+		productWatch.setMaxPricePerRound(GunbotUtils.priceToCents(widgets.maxPerRoundText.getText().toString()));
+		productWatch.setMaxPrice(GunbotUtils.priceToCents(widgets.maxPriceText.getText().toString()));
 		
-		LinearLayout filterContainer = (LinearLayout)findViewById(R.id.text_filter_container);
-		
-		for (int i = 0; i < filterContainer.getChildCount(); i++){
-			LinearLayout filterRow = (LinearLayout) filterContainer.getChildAt(i);
+		for (int i = 0; i < widgets.filterContainer.getChildCount(); i++){
+			LinearLayout filterRow = (LinearLayout) widgets.filterContainer.getChildAt(i);
 			Spinner filterType = (Spinner) filterRow.getChildAt(0);
 			EditText filterText = (EditText) filterRow.getChildAt(2);
 			
 			productWatch.addTextFilter(filterType.getSelectedItemPosition(), filterText.getText().toString());
 		}
+
+		new GunbotDatabase(getApplicationContext()).saveProductWatch(productWatch);
+	}
+	
+	private ProductWatchWidgets getWatchWidgets(){
+		ProductWatchWidgets widgets = new ProductWatchWidgets();
 		
-		if (m_database == null)
-			m_database = new GunbotDatabase(getApplicationContext());
+		widgets.nameText = (EditText) findViewById(R.id.watch_name);
+		widgets.categorySpinner = (Spinner) findViewById(R.id.watch_category);
+		widgets.inStockCheckbox = (CheckBox) findViewById(R.id.watch_in_stock);
+		widgets.maxPerRoundText = (EditText) findViewById(R.id.watch_max_price_per_round);
+		widgets.maxPriceText = (EditText) findViewById(R.id.watch_max_price);
+		widgets.filterContainer = (LinearLayout)findViewById(R.id.text_filter_container);
 		
-		m_database.saveProductWatch(productWatch);
+		return widgets;
 	}
 
+	private static class ProductWatchWidgets{
+		public EditText nameText;
+		public Spinner categorySpinner;
+		public CheckBox inStockCheckbox;
+		public EditText maxPerRoundText;
+		public EditText maxPriceText;
+		public LinearLayout filterContainer;
+	}
 }
