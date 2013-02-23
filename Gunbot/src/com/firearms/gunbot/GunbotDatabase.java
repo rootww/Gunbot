@@ -9,7 +9,6 @@ import java.util.Vector;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
@@ -51,10 +50,10 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 	}
 	
 	private void getSucategoryInformation(GunbotCategory category){
-		Cursor subcatCursor = m_database.rawQuery("SELECT name, url FROM product_categories WHERE parent = ?;", new String[]{String.valueOf(category.getId())});
+		Cursor subcatCursor = m_database.rawQuery("SELECT id, name, url FROM product_categories WHERE parent = ?;", new String[]{String.valueOf(category.getId())});
 		
 		while (subcatCursor.moveToNext())
-			category.AddSubcategory(subcatCursor.getString(0), subcatCursor.getString(1));
+			category.AddSubcategory(subcatCursor.getInt(0), subcatCursor.getString(1), subcatCursor.getString(2));
 		
 		subcatCursor.close();
 	}

@@ -21,8 +21,8 @@ public class GunbotCategory {
 		return m_id;
 	}
 	
-	public GunbotSubcategory AddSubcategory(String name, String url){
-		m_subcategories.add(new GunbotSubcategory(name, url));
+	public GunbotSubcategory AddSubcategory(int id, String name, String url){
+		m_subcategories.add(new GunbotSubcategory(id, name, url));
 		return m_subcategories.lastElement();
 	}
 	
@@ -45,10 +45,16 @@ public class GunbotCategory {
 	public static class GunbotSubcategory{
 		private String m_name;
 		private String m_url;
+		private int m_id;
 		
-		public GunbotSubcategory(String name, String url){
+		public GunbotSubcategory(int id, String name, String url){
+			m_id = id;
 			m_name = name;
 			m_url = url;
+		}
+		
+		public int getId(){
+			return m_id;
 		}
 		
 		public String getName(){

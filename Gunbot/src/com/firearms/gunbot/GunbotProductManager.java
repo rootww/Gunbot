@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class GunbotProductManager {
 	private static final String LOG_TAG = "GunbotProductManager";
@@ -89,14 +90,19 @@ public class GunbotProductManager {
 			}
 			catch (IOException e){
 				Log.e(DEBUG_TAG, "Error fetching Gunbot Data");
+				Toast.makeText(m_context, "Unable to fetch data from gunbot", Toast.LENGTH_SHORT).show();
 			}
 			return null;
 		}
 		
 		protected void onPostExecute(Void result){
-			ArrayAdapter<String> adapter= new ArrayAdapter<String>(m_context,R.layout.list_item,items);
-			m_productList.setAdapter(adapter);
-		    m_isUpdating = false;
+			m_isUpdating = false;
+			
+			if (items != null){
+				ArrayAdapter<String> adapter= new ArrayAdapter<String>(m_context,R.layout.list_item,items);
+				m_productList.setAdapter(adapter);
+			}
+		    
 		}
 	}
 }
