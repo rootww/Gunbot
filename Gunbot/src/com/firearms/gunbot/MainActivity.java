@@ -19,6 +19,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 	private int m_currentProductType = 0;
 	private GunbotProductManager m_productManager = null;
 	private Vector<GunbotCategory> m_categories;
+	private GunbotProductAnalyzer m_analyzer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +30,9 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 		
 		GunbotDatabase database = new GunbotDatabase(getApplicationContext());
 		m_categories = database.getCategoryInformation();
-		m_productManager = new GunbotProductManager(getApplicationContext(), listView, m_categories);
+		m_analyzer = new GunbotProductAnalyzer();
+		m_productManager = new GunbotProductManager(getApplicationContext(), listView, m_categories, m_analyzer);
+		
 		
 		initSpinner();
 	}
@@ -52,6 +55,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 		m_currentProductType = pos;
+		m_analyzer.clearProducts();
 		m_productManager.refreshProducts(0,m_currentProductType, true);
 	}
 	
@@ -82,7 +86,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 		
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			  @Override
-			  public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+			  public void onItemClick(AdapterView<?> adapter, View view, int position, long arg3) {
 				  activateProductLink(m_productManager.getProductLinkUrl(position));
 			};
 		});

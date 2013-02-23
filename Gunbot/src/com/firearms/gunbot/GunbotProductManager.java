@@ -28,11 +28,14 @@ public class GunbotProductManager {
 	private GunbotDataFetcherTask m_currentTask = null;
 	private Vector<GunbotCategory> m_categories = null;
 	
+	private GunbotProductAnalyzer m_analyzer;
 	
-	public GunbotProductManager(Context context, ListView listview, Vector<GunbotCategory> categories){
+	
+	public GunbotProductManager(Context context, ListView listview, Vector<GunbotCategory> categories, GunbotProductAnalyzer analyzer){
 		m_productList = listview;
 		m_context = context;
 		m_categories = categories;
+		m_analyzer = analyzer;
 	}
 	
 	public boolean isUpdating(){
@@ -112,6 +115,7 @@ public class GunbotProductManager {
 			if (items != null){
 				ArrayAdapter<String> adapter= new ArrayAdapter<String>(m_context,R.layout.list_item,items);
 				m_productList.setAdapter(adapter);
+				m_analyzer.analyzeProducts(m_currentItems);
 			}
 		    
 		}
