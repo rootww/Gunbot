@@ -1,6 +1,7 @@
 package com.firearms.gunbot;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Vector;
 
 import org.jsoup.Jsoup;
@@ -24,14 +25,14 @@ public class GunbotProductManager {
 	private ListView m_productList = null;
 	private Context m_context = null;
 	private boolean m_isUpdating = false;
-	private Vector<GunbotProduct> m_currentItems = null;
+	private List<GunbotProduct> m_currentItems = null;
 	private GunbotDataFetcherTask m_currentTask = null;
-	private Vector<GunbotCategory> m_categories = null;
+	private List<GunbotCategory> m_categories = null;
 	
 	private GunbotProductAnalyzer m_analyzer;
 	
 	
-	public GunbotProductManager(Context context, ListView listview, Vector<GunbotCategory> categories, GunbotProductAnalyzer analyzer){
+	public GunbotProductManager(Context context, ListView listview, List<GunbotCategory> categories, GunbotProductAnalyzer analyzer){
 		m_productList = listview;
 		m_context = context;
 		m_categories = categories;

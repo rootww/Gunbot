@@ -4,6 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GunbotUtils {
+	public static final String EXTRA_ID = "com.firearms.gunbot.EXTRA_ID";
+	
 	static Pattern pricePattern = Pattern.compile("\\D*(\\d*)\\.(\\d*)\\D*");
 	
 	public static int priceToCents(String price){

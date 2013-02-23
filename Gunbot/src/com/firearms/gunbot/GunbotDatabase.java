@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Vector;
 
 import android.content.Context;
@@ -33,7 +34,11 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 
 	}
 	
-	public Vector<GunbotCategory> getCategoryInformation(){
+	public GunbotProductWatch SaveProductWatch(GunbotProductWatch productWatch){
+		return productWatch;
+	}
+	
+	public List<GunbotCategory> getCategoryInformation(){
 		open();
 		
 		Cursor catCursor = m_database.rawQuery("SELECT name, id FROM product_categories WHERE parent = 0;", null);

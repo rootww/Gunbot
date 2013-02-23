@@ -1,5 +1,6 @@
 package com.firearms.gunbot;
 
+import java.util.List;
 import java.util.Vector;
 
 import android.app.Activity;
@@ -18,7 +19,7 @@ import android.widget.Spinner;
 public class MainActivity extends Activity implements OnItemSelectedListener{
 	private int m_currentProductType = 0;
 	private GunbotProductManager m_productManager = null;
-	private Vector<GunbotCategory> m_categories;
+	private List<GunbotCategory> m_categories;
 	private GunbotProductAnalyzer m_analyzer;
 	
 	@Override
@@ -63,6 +64,9 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
 	    switch (item.getItemId()) {
+	    case R.id.menu_watches:
+	    	showWatchView();
+	    	return true;
 	    case R.id.menu_settings:
 	    	return true;
 	    case R.id.menu_refresh:
@@ -94,8 +98,8 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 		return listView;
 	}
 	
-
-	
-	
-
+	private void showWatchView(){
+		Intent intent = new Intent(getApplicationContext(), GunbotWatchViewActivity.class);
+		startActivity(intent);
+	}
 }

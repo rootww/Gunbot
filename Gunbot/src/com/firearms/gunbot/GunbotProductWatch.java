@@ -5,12 +5,16 @@ import java.util.Vector;
 public class GunbotProductWatch {
 	private String m_name;
 	private int m_id;
-	private int m_category;
+	private int m_category = 0;
 	
 	private Vector<TextFilter> m_textFilters = new Vector<TextFilter>();
 	private int m_maxPrice = 0;
 	private int m_maxPricePerRound = 0;
 	private boolean m_mustBeInStock = false;
+	
+	public GunbotProductWatch(String name){
+		this(0, name);
+	}
 	
 	public GunbotProductWatch(int id, String name){
 		m_id = id;
@@ -94,6 +98,10 @@ public class GunbotProductWatch {
 	
 	public int getId(){
 		return m_id;
+	}
+	
+	public void setId(int id){
+		m_id = id;
 	}
 	
 	public int getCategory(){

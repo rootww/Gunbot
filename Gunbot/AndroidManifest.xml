@@ -3,8 +3,8 @@
     package="com.firearms.gunbot"
     android:versionCode="1"
     android:versionName="1.0" >
-    
-    <uses-permission android:name="android.permission.INTERNET" /> 
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -23,6 +23,22 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.firearms.gunbot.GunbotWatchViewActivity"
+            android:label="@string/title_activity_gunbot_watch_view"
+            android:parentActivityName="com.firearms.gunbot.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.firearms.gunbot.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.firearms.gunbot.GunbotNewWatchActivity"
+            android:label="@string/title_activity_gunbot_new_watch"
+            android:parentActivityName="com.firearms.gunbot.GunbotWatchViewActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.firearms.gunbot.GunbotWatchViewActivity" />
         </activity>
     </application>
 
