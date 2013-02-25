@@ -22,10 +22,20 @@ public class GunbotProductAnalyzer {
 	
 	private Context m_context;
 	
+	private GunbotDatabase m_database;
+	private boolean m_shouldCloseDatabase;
+	
 	private boolean m_shouldNotify = true;
 	
 	public GunbotProductAnalyzer(Context context){
 		m_context = context;
+		m_shouldCloseDatabase = true;
+	}
+	
+	public GunbotProductAnalyzer(Context context, GunbotDatabase database){
+		m_context = context;
+		m_database = database;
+		m_shouldCloseDatabase = false;
 	}
 	
 	public void clearProducts(){
@@ -33,7 +43,10 @@ public class GunbotProductAnalyzer {
 	}
 	
 	public void analyzeProducts(List<GunbotProduct> products){
-		m_watches = new GunbotDatabase(m_context).getProductWatches();
+		if (m_database == null)
+			m_database = new GunbotDatabase(m_context);
+			
+		m_watches = m_database.getProductWatches();
 		
 		if (m_previousProducts != null && m_shouldNotify){
 			for (GunbotProduct product : products){
@@ -47,6 +60,9 @@ public class GunbotProductAnalyzer {
 		}
 		
 		mapProducts(products);
+		
+		if (m_shouldCloseDatabase)
+			m_database.close();
 	}
 	
 	private void mapProducts(List<GunbotProduct> products){

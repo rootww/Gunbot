@@ -67,6 +67,19 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 		return watch;
 	}
 	
+	public String getProductUrl(int productType, int categoryId){
+		open();
+		Cursor result = m_database.rawQuery("SELECT url FROM product_categories where parent = ? and id = ?;", new String[]{String.valueOf(productType), String.valueOf(categoryId)});
+		
+		String url = "";
+		
+		if (result.moveToNext())
+			url = result.getString(0);
+		
+		result.close();
+		return url;
+	}
+	
 	public void deleteProductWatchById(long id){
 		open();
 		m_database.delete("product_watches","id = ?;", new String[]{String.valueOf(id)});
