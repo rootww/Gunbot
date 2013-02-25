@@ -157,8 +157,10 @@ public class GunbotWatchViewActivity extends ListActivity {
 			StringBuilder str = new StringBuilder();
 			boolean space = false;
 			
-			if (watch.getMustBeInStock())
+			if (watch.getMustBeInStock()){
 				str.append("Must be in stock");
+				space = true;
+			}
 			
 			if (watch.getMaxPricePerRound() > 0){
 				if (space)
