@@ -33,6 +33,10 @@
         android:entries="@array/preference_refresh_interval_entries"
         android:entryValues="@array/preference_refresh_interval_values"
         android:defaultValue="@string/preference_refresh_interval_default" />
+     
+     <Preference
+        android:key="cache_reset"
+        android:title="@string/preference_clear_product_cache" />
         
     </PreferenceCategory>
 </PreferenceScreen>

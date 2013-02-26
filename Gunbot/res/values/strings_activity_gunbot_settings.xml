@@ -3,6 +3,7 @@
     <string name="preference_notification">Receive notifications</string>
     <string name="preference_notification_sound">Play notification sound</string>
     <string name="preference_notification_vibrate">Vibrate on notification</string>
+    
 	<string name="preference_refresh_category">Data Refresh</string>    
     <string name="preference_refresh_interval">Refresh interval</string>
     <string name="preference_refresh_interval_default">1 minute</string>
@@ -20,4 +21,6 @@
         <item>300000</item>
         <item>600000</item>
     </string-array>
+    
+    <string name="preference_clear_product_cache">Clear product cache</string>
 </resources>

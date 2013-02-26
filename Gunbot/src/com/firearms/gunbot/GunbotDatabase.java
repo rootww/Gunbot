@@ -118,6 +118,11 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 		return watches;
 	}
 	
+	public void clearProductCache(){
+		open();
+		m_database.delete("products", null, null);
+	}
+	
 	public Map<String, GunbotProduct> getProductMap(int category, int subcategory){
 		TreeMap<String, GunbotProduct> products = new TreeMap<String, GunbotProduct>();
 		
