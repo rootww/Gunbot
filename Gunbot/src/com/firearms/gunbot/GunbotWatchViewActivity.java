@@ -48,7 +48,7 @@ public class GunbotWatchViewActivity extends ListActivity {
 		
 		GunbotDatabase database = new GunbotDatabase(getApplicationContext());
 		m_productWatches = database.getProductWatches();
-		getListView().setAdapter(new GunbotProductWatchAdapter(this, R.layout.product_watch_view_row, m_productWatches));
+		getListView().setAdapter(new GunbotProductWatchAdapter(this, R.layout.product_list_item, m_productWatches));
 	}
 
 	@Override
