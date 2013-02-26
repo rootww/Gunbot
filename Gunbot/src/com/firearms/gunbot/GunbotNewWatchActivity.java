@@ -22,6 +22,7 @@ import android.support.v4.app.NavUtils;
 
 public class GunbotNewWatchActivity extends Activity {
 	private long m_watchId;
+	List<GunbotCategory> m_categories;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +32,10 @@ public class GunbotNewWatchActivity extends Activity {
 
 		
 		GunbotDatabase database = new GunbotDatabase(getApplicationContext());
-		List<GunbotCategory> categories = database.getCategoryInformation();
+		m_categories = database.getCategoryInformation();
 		
 		Spinner categorySpinner = (Spinner) findViewById(R.id.watch_category);
-		ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, categories.get(0).getSubcategoryNames());
+		ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, m_categories.get(0).getSubcategoryNames());
 		categorySpinner.setAdapter(spinnerArrayAdapter);
 		
 		if (m_watchId != 0)
@@ -119,7 +120,17 @@ public class GunbotNewWatchActivity extends Activity {
 		GunbotProductWatch watch = database.getProductWatchById(m_watchId);
 		
 		widgets.nameText.setText(watch.getName());
-		widgets.categorySpinner.setSelection(watch.getCategory());
+		
+		GunbotCategory category = m_categories.get(0);
+		for (int i = 0; i < category.getSubcategoryCount(); i++){
+			GunbotCategory.GunbotSubcategory subcategory = category.getSubcategory(i);
+			
+			if (subcategory.getId() == watch.getCategory()){
+				widgets.categorySpinner.setSelection(i);
+				break;
+			}
+		}
+		
 		widgets.inStockCheckbox.setChecked(watch.getMustBeInStock());
 		widgets.maxPerRoundText.setText(GunbotUtils.centsToDollarStr(watch.getMaxPricePerRound()));
 		widgets.maxPriceText.setText(GunbotUtils.centsToDollarStr(watch.getMaxPrice()));
@@ -134,7 +145,7 @@ public class GunbotNewWatchActivity extends Activity {
 		ProductWatchWidgets widgets = getWatchWidgets();
 		
 		GunbotProductWatch productWatch = new GunbotProductWatch(m_watchId, widgets.nameText.getText().toString());
-		productWatch.setCategory(widgets.categorySpinner.getSelectedItemPosition());
+		productWatch.setCategory(m_categories.get(0).getSubcategory(widgets.categorySpinner.getSelectedItemPosition()).getId());
 		productWatch.setMustBeInStock(widgets.inStockCheckbox.isChecked());
 		productWatch.setMaxPricePerRound(GunbotUtils.priceToCents(widgets.maxPerRoundText.getText().toString()));
 		productWatch.setMaxPrice(GunbotUtils.priceToCents(widgets.maxPriceText.getText().toString()));
