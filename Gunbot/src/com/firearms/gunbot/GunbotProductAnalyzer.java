@@ -2,6 +2,7 @@ package com.firearms.gunbot;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -94,7 +95,7 @@ public class GunbotProductAnalyzer {
 		mBuilder.setContentIntent(resultPendingIntent);
 		
 		NotificationManager mNotificationManager = (NotificationManager) m_context.getSystemService(Context.NOTIFICATION_SERVICE);
-		mNotificationManager.notify(55662187, mBuilder.build());
+		mNotificationManager.notify(new Random().nextInt(), mBuilder.build());
 	}
 	
 	public void setShouldNotify(boolean shouldNotify){
