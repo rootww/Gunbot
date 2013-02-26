@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,6 +18,7 @@ import android.util.Log;
 public class GunbotProductFetcher implements Runnable{
 	public static final String DEBUG_TAG = "GunbotProductFetcher";
 	private static final String IN_STOCK_TEXT = "[in stock]";
+	private static Pattern sellerPattern = Pattern.compile("\\[(.+)\\]");
 	
 	private int m_category;
 	private int m_subcategory;
@@ -63,6 +66,17 @@ public class GunbotProductFetcher implements Runnable{
 		notifyProductsFetched();
 	}
 	
+	private String getSellerName(String sellerText){
+		
+		Matcher matcher = sellerPattern.matcher(sellerText);
+		matcher.find();
+		
+		if (matcher.groupCount() != 1)
+			return "";
+		else
+			return matcher.group(1);
+	}
+	
 	private GunbotProduct extractProductFromRow(Element row){
 		Elements children = row.children();
 		Element product = children.get(0).children().get(0);
@@ -73,7 +87,8 @@ public class GunbotProductFetcher implements Runnable{
 									product.attr("href"), 
 									GunbotUtils.priceToCents(children.get(1).text()),
 									GunbotUtils.priceToCents(children.get(2).text()) , 
-									itemInStock(children.get(3).text()));
+									itemInStock(children.get(3).text()),
+									getSellerName(children.get(4).text()));
 	}
 	
 	private boolean itemInStock(String stockText){

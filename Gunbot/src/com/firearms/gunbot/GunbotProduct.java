@@ -9,9 +9,10 @@ public class GunbotProduct {
 	private int m_pricePerRound;
 	private int m_totalPrice;
 	private boolean m_isInStock;
+	private String m_seller;
 	
 	
-	public GunbotProduct(int category, int subcategory, String description, String url, int pricePerRound, int totalPrice, boolean inStock){
+	public GunbotProduct(int category, int subcategory, String description, String url, int pricePerRound, int totalPrice, boolean inStock, String seller){
 		m_category = category;
 		m_subcategory = subcategory;
 		m_description = description;
@@ -19,6 +20,7 @@ public class GunbotProduct {
 		m_pricePerRound = pricePerRound;
 		m_totalPrice = totalPrice;
 		m_isInStock = inStock;
+		m_seller = seller;
 	}
 	
 	public int getCategory(){
@@ -47,6 +49,10 @@ public class GunbotProduct {
 	
 	public boolean isInStock(){
 		return m_isInStock;
+	}
+	
+	public String getSeller(){
+		return m_seller;
 	}
 
 }
