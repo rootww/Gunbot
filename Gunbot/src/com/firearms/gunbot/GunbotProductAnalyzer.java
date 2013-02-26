@@ -3,6 +3,7 @@ package com.firearms.gunbot;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Vector;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -17,7 +18,6 @@ import android.util.Log;
 public class GunbotProductAnalyzer {
 	private static final String LOG_TAG = "GunbotProductAnalyzer";
 	
-	private Map<String, GunbotProduct> m_previousProducts;
 	private List<GunbotProductWatch> m_watches;
 	
 	private Context m_context;
@@ -38,38 +38,41 @@ public class GunbotProductAnalyzer {
 		m_shouldCloseDatabase = false;
 	}
 	
-	public void clearProducts(){
-		m_previousProducts = null;
+	public GunbotProductAnalyzer(Context context, GunbotDatabase database, int categoryId, int subcategoryId, List<GunbotProduct> products){
+		this(context, database);
+		analyzeProducts(categoryId, subcategoryId, products);
 	}
 	
-	public void analyzeProducts(List<GunbotProduct> products){
+	public void analyzeProducts(int categoryId, int subcategoryId, List<GunbotProduct> products){
 		if (m_database == null)
 			m_database = new GunbotDatabase(m_context);
-			
-		m_watches = m_database.getProductWatches();
 		
-		if (m_previousProducts != null && m_shouldNotify){
-			for (GunbotProduct product : products){
-				for (GunbotProductWatch watch : m_watches){
-					if (watch.satisfies(product)){
-						notifyUserOfProduct(product);
-						break;
-					}
-				}
-			}
+		
+		m_watches = m_database.getProductWatches();
+			
+		Map<String, GunbotProduct> previous = m_database.getProductMap(categoryId, subcategoryId);
+		
+		for (GunbotProduct product : products){
+			if (!previous.containsKey(product.getDescription()))
+				checkProductWatches(product);
 		}
 		
-		mapProducts(products);
+		updateProductCategory(categoryId, subcategoryId, products);
 		
 		if (m_shouldCloseDatabase)
 			m_database.close();
 	}
 	
-	private void mapProducts(List<GunbotProduct> products){
-		m_previousProducts = new TreeMap<String, GunbotProduct>();
-		
-		for (GunbotProduct product : products)
-			m_previousProducts.put(product.getDescription(), product);
+	private void updateProductCategory(int categoryId, int subcategoryId, List<GunbotProduct> products){
+		m_database.clearProducts(categoryId, subcategoryId);
+		m_database.insertProducts(products);
+	}
+	
+	private void checkProductWatches(GunbotProduct product){
+		for (GunbotProductWatch watch : m_watches){
+			if (watch.satisfies(product))
+				notifyUserOfProduct(product);
+		}
 	}
 	
 	private void notifyUserOfProduct(GunbotProduct product){

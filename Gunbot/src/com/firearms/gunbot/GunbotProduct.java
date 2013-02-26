@@ -1,6 +1,7 @@
 package com.firearms.gunbot;
 
 public class GunbotProduct {
+	private int m_id;
 	private int m_category;
 	private int m_subcategory;
 	
@@ -11,8 +12,8 @@ public class GunbotProduct {
 	private boolean m_isInStock;
 	private String m_seller;
 	
-	
-	public GunbotProduct(int category, int subcategory, String description, String url, int pricePerRound, int totalPrice, boolean inStock, String seller){
+	public GunbotProduct(int id, int category, int subcategory, String description, String url, int pricePerRound, int totalPrice, boolean inStock, String seller){
+		m_id = id;
 		m_category = category;
 		m_subcategory = subcategory;
 		m_description = description;
@@ -21,6 +22,13 @@ public class GunbotProduct {
 		m_totalPrice = totalPrice;
 		m_isInStock = inStock;
 		m_seller = seller;
+	}
+	public GunbotProduct(int category, int subcategory, String description, String url, int pricePerRound, int totalPrice, boolean inStock, String seller){
+		this(0,category, subcategory, description, url, pricePerRound, totalPrice, inStock, seller);
+	}
+	
+	public int getId(){
+		return m_id;
 	}
 	
 	public int getCategory(){

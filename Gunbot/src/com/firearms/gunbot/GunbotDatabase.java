@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import org.json.JSONArray;
@@ -53,6 +55,24 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 		}
 	}
 	
+	public void clearProducts(int categoryId, int subcategoryId){
+		open();
+		
+		m_database.delete("products","categoryId = ? AND subcategoryId = ?;", new String[]{String.valueOf(categoryId),String.valueOf(subcategoryId)});
+	}
+	
+	private long insertProduct(GunbotProduct product){
+		ContentValues contentValues = getContentValues(product);
+		return m_database.insert("products", null, contentValues);
+	}
+	
+	public void insertProducts(List<GunbotProduct> products){
+		open();
+		
+		for (GunbotProduct product : products)
+			insertProduct(product);
+	}
+	
 	public GunbotProductWatch getProductWatchById(long id){
 		open();
 		Cursor result = m_database.rawQuery("SELECT * FROM product_watches where id = ?;", new String[]{String.valueOf(id)});
@@ -60,7 +80,7 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 		
 		if (result.getCount() > 0){
 			result.moveToNext();
-			watch = getFromCursor(result);
+			watch = getProductWatchFromCursor(result);
 		}
 
 		result.close();
@@ -92,13 +112,49 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 		Cursor result = m_database.rawQuery("SELECT * from product_watches;", null);
 		
 		while (result.moveToNext())
-			watches.add(getFromCursor(result));
+			watches.add(getProductWatchFromCursor(result));
 		
 		result.close();
 		return watches;
 	}
 	
-	private static GunbotProductWatch getFromCursor(Cursor cursor){
+	public Map<String, GunbotProduct> getProductMap(int category, int subcategory){
+		TreeMap<String, GunbotProduct> products = new TreeMap<String, GunbotProduct>();
+		
+		open();
+		Cursor result = m_database.rawQuery("SELECT * FROM products where categoryId = ? AND subcategoryId = ?;", new String[]{String.valueOf(category),String.valueOf(subcategory)});
+		
+		while (result.moveToNext()){
+			GunbotProduct product = getProductFromCursor(result);
+			products.put(product.getDescription(), product);
+		}
+		return products;
+	}
+	
+	public List<GunbotProduct> getProducts(int category, int subcategory){
+		Vector<GunbotProduct> products = new Vector<GunbotProduct>();
+		
+		open();
+		Cursor result = m_database.rawQuery("SELECT * FROM products where categoryId = ? AND subcategoryId = ?;", new String[]{String.valueOf(category),String.valueOf(subcategory)});
+		
+		while (result.moveToNext())
+			products.add(getProductFromCursor(result));
+		
+		return products;
+	}
+	
+	private static GunbotProduct getProductFromCursor(Cursor cursor){
+		return new GunbotProduct(	cursor.getInt(0),
+									cursor.getInt(1),
+									cursor.getString(2),
+									cursor.getString(3),
+									cursor.getInt(4),
+									cursor.getInt(5),
+									cursor.getInt(6) == 1,
+									cursor.getString(7));
+	}
+	
+	private static GunbotProductWatch getProductWatchFromCursor(Cursor cursor){
 		long id = cursor.getLong(0);
 		String name = cursor.getString(1);
 		
@@ -121,6 +177,21 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 		}
 		
 		return productWatch;
+	}
+	
+	private static ContentValues getContentValues(GunbotProduct product){
+		ContentValues values = new ContentValues();
+		
+		values.put("categoryId", product.getCategory());
+		values.put("subcategoryId", product.getSubcategory());
+		values.put("description", product.getDescription());
+		values.put("url", product.getUrl());
+		values.put("pricePerRound", product.getPricePerRound());
+		values.put("totalPrice", product.getTotalPrice());
+		values.put("inStock", product.isInStock() ? 1 : 0);
+		values.put("seller", product.getSeller());
+		
+		return values;
 	}
 	
 	private static ContentValues getContentValues(GunbotProductWatch product){

@@ -1,5 +1,6 @@
 CREATE TABLE product_categories(id INTEGER PRIMARY KEY AUTOINCREMENT, parent INT, name TEXT, url TEXT);
 CREATE TABLE product_watches(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, category INT, maxPrice INT, maxParicePerRound INT, mustBeInStock INT, filters TEXT);
+CREATE TABLE products(id INTEGER PRIMARY KEY AUTOINCREMENT, categoryId INT, subcategoryId INT, description TEXT, url TEXT, pricePerRound INT, totalPrice INT, inStock INT, seller TEXT);
 
 INSERT INTO product_categories VALUES (NULL, 0, 'AMMO', '');
 

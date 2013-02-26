@@ -26,6 +26,10 @@ public class GunbotCategory {
 		return m_subcategories.lastElement();
 	}
 	
+	public int getSubcategoryCount(){
+		return m_subcategories.size();
+	}
+	
 	public GunbotSubcategory getSubcategory(int index){
 		if (index < 0 || index >= m_subcategories.size())
 			return null;

@@ -22,6 +22,9 @@ public class GunbotProductWatch {
 	}
 	
 	public boolean satisfies(GunbotProduct product){
+		if (m_category != product.getSubcategory())
+			return false;
+		
 		if (m_mustBeInStock && !product.isInStock())
 			return false;
 		

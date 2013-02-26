@@ -62,6 +62,8 @@ public class GunbotProductFetcher implements Runnable{
 			notifyFetchError(e.getMessage());
 		}
 		
+		new GunbotProductAnalyzer(m_context, m_database, m_category, m_subcategory, m_products);
+		
 		m_database.close();
 		notifyProductsFetched();
 	}
