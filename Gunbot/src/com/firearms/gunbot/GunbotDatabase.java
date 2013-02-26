@@ -107,9 +107,18 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 	
 	public List<GunbotProductWatch> getProductWatches(){
 		open();
-		Vector <GunbotProductWatch> watches = new Vector<GunbotProductWatch>();
-		
 		Cursor result = m_database.rawQuery("SELECT * from product_watches;", null);
+		return processWatchQuery(result);
+	}
+	
+	public List<GunbotProductWatch> getProductWatches(int categoryId, int subcategoryId){
+		open();
+		Cursor result = m_database.rawQuery("SELECT * from product_watches where category = ?;", new String[]{String.valueOf(subcategoryId)});
+		return processWatchQuery(result);
+	}
+	
+	private List<GunbotProductWatch> processWatchQuery(Cursor result){
+		Vector <GunbotProductWatch> watches = new Vector<GunbotProductWatch>();
 		
 		while (result.moveToNext())
 			watches.add(getProductWatchFromCursor(result));

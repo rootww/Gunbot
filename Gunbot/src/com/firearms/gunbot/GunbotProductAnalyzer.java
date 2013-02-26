@@ -48,7 +48,7 @@ public class GunbotProductAnalyzer {
 			m_database = new GunbotDatabase(m_context);
 		
 		
-		m_watches = m_database.getProductWatches();
+		m_watches = m_database.getProductWatches(categoryId, subcategoryId);
 			
 		Map<String, GunbotProduct> previous = m_database.getProductMap(categoryId, subcategoryId);
 		
@@ -70,8 +70,10 @@ public class GunbotProductAnalyzer {
 	
 	private void checkProductWatches(GunbotProduct product){
 		for (GunbotProductWatch watch : m_watches){
-			if (watch.satisfies(product))
+			if (watch.satisfies(product)){
 				notifyUserOfProduct(product);
+				break;
+			}
 		}
 	}
 	
