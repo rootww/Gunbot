@@ -96,7 +96,7 @@ public class GunbotProductAnalyzer {
 		
 		NotificationCompat.Builder mBuilder =
 		        new NotificationCompat.Builder(m_context)
-		        .setSmallIcon(android.R.drawable.ic_dialog_alert)
+		        .setSmallIcon(android.R.drawable.star_off)
 		        .setContentTitle("New Product Found!")
 		        .setContentText(product.getDescription());
 		
