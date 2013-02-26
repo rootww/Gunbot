@@ -125,7 +125,7 @@ public class GunbotNewWatchActivity extends Activity {
 		for (int i = 0; i < category.getSubcategoryCount(); i++){
 			GunbotCategory.GunbotSubcategory subcategory = category.getSubcategory(i);
 			
-			if (subcategory.getId() == watch.getCategory()){
+			if (subcategory.getId() == watch.getSubcategory()){
 				widgets.categorySpinner.setSelection(i);
 				break;
 			}
@@ -143,9 +143,10 @@ public class GunbotNewWatchActivity extends Activity {
 	
 	private void saveWatch(){
 		ProductWatchWidgets widgets = getWatchWidgets();
+		int subcategory = m_categories.get(0).getSubcategory(widgets.categorySpinner.getSelectedItemPosition()).getId();
 		
-		GunbotProductWatch productWatch = new GunbotProductWatch(m_watchId, widgets.nameText.getText().toString());
-		productWatch.setCategory(m_categories.get(0).getSubcategory(widgets.categorySpinner.getSelectedItemPosition()).getId());
+		//todo: currently only supporting ammo (category 1)
+		GunbotProductWatch productWatch = new GunbotProductWatch(m_watchId, widgets.nameText.getText().toString(), 1, subcategory);
 		productWatch.setMustBeInStock(widgets.inStockCheckbox.isChecked());
 		productWatch.setMaxPricePerRound(GunbotUtils.priceToCents(widgets.maxPerRoundText.getText().toString()));
 		productWatch.setMaxPrice(GunbotUtils.priceToCents(widgets.maxPriceText.getText().toString()));

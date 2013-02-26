@@ -61,6 +61,17 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 		m_database.delete("products","categoryId = ? AND subcategoryId = ?;", new String[]{String.valueOf(categoryId),String.valueOf(subcategoryId)});
 	}
 	
+	public List<GunbotUtils.Pair<Integer, Integer>> getWatchCategorys(){
+		Vector <GunbotUtils.Pair<Integer, Integer>>  categories = new Vector <GunbotUtils.Pair<Integer, Integer>>();
+		
+		Cursor result = m_database.rawQuery("SELECT DISTINCT categoryId, subcategoryId FROM product_watches;", null);
+		
+		while (result.moveToNext())
+			categories.add(new GunbotUtils.Pair<Integer, Integer>(result.getInt(0), result.getInt(1)));
+		
+		return categories;
+	}
+	
 	private long insertProduct(GunbotProduct product){
 		ContentValues contentValues = getContentValues(product);
 		return m_database.insert("products", null, contentValues);
@@ -113,7 +124,7 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 	
 	public List<GunbotProductWatch> getProductWatches(int categoryId, int subcategoryId){
 		open();
-		Cursor result = m_database.rawQuery("SELECT * from product_watches where category = ?;", new String[]{String.valueOf(subcategoryId)});
+		Cursor result = m_database.rawQuery("SELECT * from product_watches where categoryId = ? AND subcategoryId = ?;", new String[]{String.valueOf(categoryId), String.valueOf(subcategoryId)});
 		return processWatchQuery(result);
 	}
 	
@@ -171,15 +182,16 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 	private static GunbotProductWatch getProductWatchFromCursor(Cursor cursor){
 		long id = cursor.getLong(0);
 		String name = cursor.getString(1);
+		int categoryId = cursor.getInt(2);
+		int subcategoryId = cursor.getInt(3);
 		
-		GunbotProductWatch productWatch = new GunbotProductWatch(id, name);
-		productWatch.setCategory(cursor.getInt(2));
-		productWatch.setMaxPrice(cursor.getInt(3));
-		productWatch.setMaxPricePerRound(cursor.getInt(4));
-		productWatch.setMustBeInStock(cursor.getInt(5) == 1);
+		GunbotProductWatch productWatch = new GunbotProductWatch(id, name, categoryId, subcategoryId);
+		productWatch.setMaxPrice(cursor.getInt(4));
+		productWatch.setMaxPricePerRound(cursor.getInt(5));
+		productWatch.setMustBeInStock(cursor.getInt(6) == 1);
 		
 		try {
-			String json = cursor.getString(6);
+			String json = cursor.getString(7);
 			JSONArray filters = new JSONArray(json);
 			
 			for (int i = 0; i < filters.length(); i++){
@@ -212,7 +224,8 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 		ContentValues values = new ContentValues();
 			
 		values.put("name", product.getName());
-		values.put("category", product.getCategory());
+		values.put("subcategoryId", product.getSubcategory());
+		values.put("categoryId", product.getCategory());
 		values.put("maxPrice", product.getMaxPrice());
 		values.put("maxParicePerRound", product.getMaxPricePerRound());
 		values.put("mustBeInStock", product.getMustBeInStock() ? 1 : 0);

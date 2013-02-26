@@ -84,7 +84,7 @@ public class GunbotProductAnalyzer {
 	
 	private void checkProductWatches(GunbotProduct product){
 		for (GunbotProductWatch watch : m_watches){
-			if (watch.satisfies(product)){
+			if (watch.matches(product)){
 				notifyUserOfProduct(product);
 				break;
 			}

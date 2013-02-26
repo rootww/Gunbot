@@ -5,6 +5,7 @@ import java.util.Vector;
 public class GunbotProductWatch {
 	private String m_name;
 	private long m_id;
+	private int m_subcategory = 0;
 	private int m_category = 0;
 	
 	private Vector<TextFilter> m_textFilters = new Vector<TextFilter>();
@@ -12,17 +13,19 @@ public class GunbotProductWatch {
 	private int m_maxPricePerRound = 0;
 	private boolean m_mustBeInStock = false;
 	
-	public GunbotProductWatch(String name){
-		this(0, name);
-	}
-	
-	public GunbotProductWatch(long id, String name){
+	public GunbotProductWatch(long id, String name, int category, int subcategory){
 		m_id = id;
 		m_name = name;
+		
+		m_category = category;
+		m_subcategory = subcategory;
 	}
 	
-	public boolean satisfies(GunbotProduct product){
-		if (m_category != product.getSubcategory())
+	public boolean matches(GunbotProduct product){
+		if (m_category != product.getCategory())
+			return false;
+		
+		if (m_subcategory != product.getSubcategory())
 			return false;
 		
 		if (m_mustBeInStock && !product.isInStock())
@@ -107,12 +110,16 @@ public class GunbotProductWatch {
 		m_id = id;
 	}
 	
-	public int getCategory(){
-		return m_category;
+	public int getSubcategory(){
+		return m_subcategory;
 	}
 	
-	public void setCategory(int category){
-		m_category = category;
+	public void setSubcategory(int subcategory){
+		m_subcategory = subcategory;
+	}
+	
+	public int getCategory(){
+		return m_category;
 	}
 	
 	public static class TextFilter{
