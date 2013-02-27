@@ -26,22 +26,14 @@ public class GunbotProductAnalyzer {
 	private Context m_context;
 	
 	private GunbotDatabase m_database;
-	private boolean m_shouldCloseDatabase;
 	
 	private boolean m_shouldNotify;
 	private boolean m_shouldVibrate;
 	private boolean m_shouldBeep;
 	
-	public GunbotProductAnalyzer(Context context){
-		m_context = context;
-		m_shouldCloseDatabase = true;
-		setNotificationSettings();
-	}
-	
 	public GunbotProductAnalyzer(Context context, GunbotDatabase database){
 		m_context = context;
 		m_database = database;
-		m_shouldCloseDatabase = false;
 		setNotificationSettings();
 	}
 	
@@ -72,9 +64,6 @@ public class GunbotProductAnalyzer {
 		}
 		
 		updateProductCategory(categoryId, subcategoryId, products);
-		
-		if (m_shouldCloseDatabase)
-			m_database.close();
 	}
 	
 	private void updateProductCategory(int categoryId, int subcategoryId, List<GunbotProduct> products){

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,7 +16,7 @@ import org.jsoup.select.Elements;
 import android.content.Context;
 import android.util.Log;
 
-public class GunbotProductFetcher implements Runnable{
+public class GunbotProductFetcher implements Runnable, Callable<Void>{
 	public static final String DEBUG_TAG = "GunbotProductFetcher";
 	private static final String IN_STOCK_TEXT = "[in stock]";
 	private static Pattern sellerPattern = Pattern.compile("\\[(.+)\\]");
@@ -28,14 +29,14 @@ public class GunbotProductFetcher implements Runnable{
 	private GunbotDatabase m_database;
 	private Context m_context;
 	
-	public GunbotProductFetcher(Context context, int category, int subcategory){
+	public GunbotProductFetcher(Context context, GunbotDatabase database, int category, int subcategory){
 		m_context = context;
+		m_database = database;
 		m_category = category;
 		m_subcategory = subcategory;
 	}
-	
-	public GunbotProductFetcher(Context context, int category, int subcategory, Listener listener){
-		this(context, category, subcategory);
+	public GunbotProductFetcher(Context context, GunbotDatabase database, int category, int subcategory, Listener listener){
+		this(context, database, category, subcategory);
 		addListener(listener);
 	}
 	
@@ -43,8 +44,17 @@ public class GunbotProductFetcher implements Runnable{
 		m_listeners.add(listener);
 	}
 	
+	@Override
+	public Void call() throws Exception {
+		fetch();
+		return null;
+	}
+	
 	public void run(){
-		m_database = new GunbotDatabase(m_context);
+		fetch();
+	}
+	
+	public void fetch(){
 		
 		try{
 			Document doc = Jsoup.connect(getRequestUrl()).get();
@@ -64,7 +74,6 @@ public class GunbotProductFetcher implements Runnable{
 		
 		new GunbotProductAnalyzer(m_context, m_database, m_category, m_subcategory, m_products);
 		
-		m_database.close();
 		notifyProductsFetched();
 	}
 	

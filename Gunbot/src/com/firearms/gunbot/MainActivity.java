@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity implements OnItemSelectedListener{
 	private int m_currentSubcategoryId = 0;
+	private GunbotDatabase m_database;
 	private List<GunbotCategory> m_categories;
 	private List<GunbotProduct> m_products;
 	boolean m_isUpdating;
@@ -33,9 +34,16 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 		
 		initListView();
 		
-		GunbotDatabase database = new GunbotDatabase(getApplicationContext());
-		m_categories = database.getCategoryInformation();
+		m_database = new GunbotDatabase(getApplicationContext());
+		m_categories = m_database.getCategoryInformation();
 		initSpinner();
+	}
+	
+	@Override
+	protected void onDestroy (){
+		super.onDestroy();
+		
+		m_database.close();
 	}
 	
 	private void initSpinner(){
@@ -135,7 +143,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 		
 		@Override
 		protected Void doInBackground(Integer... params) {
-			new GunbotProductFetcher(getApplicationContext(), params[0], params[1], this).run();
+			new GunbotProductFetcher(getApplicationContext(), m_database, params[0], params[1], this).run();
 			return null;
 		}
 		
