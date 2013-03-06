@@ -62,6 +62,8 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 	}
 	
 	public List<GunbotUtils.Pair<Integer, Integer>> getWatchCategorys(){
+		open();
+		
 		Vector <GunbotUtils.Pair<Integer, Integer>>  categories = new Vector <GunbotUtils.Pair<Integer, Integer>>();
 		
 		Cursor result = m_database.rawQuery("SELECT DISTINCT categoryId, subcategoryId FROM product_watches;", null);
@@ -171,12 +173,13 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 	private static GunbotProduct getProductFromCursor(Cursor cursor){
 		return new GunbotProduct(	cursor.getInt(0),
 									cursor.getInt(1),
-									cursor.getString(2),
+									cursor.getInt(2),
 									cursor.getString(3),
-									cursor.getInt(4),
+									cursor.getString(4),
 									cursor.getInt(5),
-									cursor.getInt(6) == 1,
-									cursor.getString(7));
+									cursor.getInt(6),
+									cursor.getInt(7) == 1,
+									cursor.getString(8));
 	}
 	
 	private static GunbotProductWatch getProductWatchFromCursor(Cursor cursor){
