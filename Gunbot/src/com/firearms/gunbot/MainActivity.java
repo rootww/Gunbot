@@ -2,11 +2,17 @@ package com.firearms.gunbot;
 
 import java.util.List;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,11 +27,37 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity implements OnItemSelectedListener{
+	private static final String LOG_TAG = "MainActivity";
+	
 	private int m_currentSubcategoryId = 0;
 	private GunbotDatabase m_database;
 	private List<GunbotCategory> m_categories;
 	private List<GunbotProduct> m_products;
 	boolean m_isUpdating;
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+		installBackgroundServiceIfNecessary();
+	}
+	
+	private void installBackgroundServiceIfNecessary(){
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		
+		if (!preferences.getBoolean("preference_notification", true))
+			return;
+		
+		int interval = Integer.parseInt(preferences.getString("preference_refresh_interval", "300000"));
+		AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+		
+		Intent intent = new Intent(MainActivity.this, GunbotBackgroundUpdater.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		PendingIntent pending = PendingIntent.getService(this, 0, intent, 0);
+		
+		alarmManager.cancel(pending);
+		alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime()+ 5000, interval, pending);
+		Log.i(LOG_TAG,"Background service installed");
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

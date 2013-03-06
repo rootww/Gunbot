@@ -6,6 +6,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -16,6 +18,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        
         <activity
             android:name="com.firearms.gunbot.MainActivity"
             android:label="@string/app_name" >
@@ -49,6 +52,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.firearms.gunbot.MainActivity" />
         </activity>
+        <service android:enabled="true" android:name=".GunbotBackgroundUpdater"></service>
     </application>
 
 </manifest>
