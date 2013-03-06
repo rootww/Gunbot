@@ -37,6 +37,15 @@ public class GunbotCategory {
 			return m_subcategories.get(index);
 	}
 	
+	public GunbotSubcategory getSubcategoryById(int id){
+		for (GunbotSubcategory subcategory : m_subcategories){
+			if (subcategory.getId() == id)
+				return subcategory;
+		}
+		
+		return null;
+	}
+	
 	public String[] getSubcategoryNames(){
 		String[] subcategoryNames = new String[m_subcategories.size()];
 		

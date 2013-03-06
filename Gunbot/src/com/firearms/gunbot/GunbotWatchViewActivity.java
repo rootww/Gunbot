@@ -2,6 +2,8 @@ package com.firearms.gunbot;
 
 import java.util.List;
 
+import com.firearms.gunbot.GunbotProductWatch.TextFilter;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -25,15 +27,21 @@ import android.widget.TextView;
 
 public class GunbotWatchViewActivity extends ListActivity {
 	private List<GunbotProductWatch> m_productWatches;
+	List<GunbotCategory> m_categories;
+	GunbotDatabase m_database;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		m_database = new GunbotDatabase(getApplicationContext());
+		m_categories = m_database.getCategoryInformation();
+		
 		initActionBar();
 		
 		ListView listView = getListView();
 		listView.setLongClickable(true);
+		
 		registerForContextMenu(listView);
 	}
 	
@@ -46,8 +54,8 @@ public class GunbotWatchViewActivity extends ListActivity {
 	protected void onResume (){
 		super.onResume();
 		
-		GunbotDatabase database = new GunbotDatabase(getApplicationContext());
-		m_productWatches = database.getProductWatches();
+		
+		m_productWatches = m_database.getProductWatches();
 		getListView().setAdapter(new GunbotProductWatchAdapter(this, R.layout.product_list_item, m_productWatches));
 	}
 
@@ -118,7 +126,7 @@ public class GunbotWatchViewActivity extends ListActivity {
 		return true;
 	}
 	
-	private static class GunbotProductWatchAdapter extends ArrayAdapter<GunbotProductWatch>{
+	private class GunbotProductWatchAdapter extends ArrayAdapter<GunbotProductWatch>{
 		private Context m_context;
 		private int m_layoutResourceId;
 		private List<GunbotProductWatch> m_productWatches;
@@ -155,31 +163,45 @@ public class GunbotWatchViewActivity extends ListActivity {
 		
 		private String buildDetailString(GunbotProductWatch watch){
 			StringBuilder str = new StringBuilder();
-			boolean space = false;
+			String spaceStr = "    ";
+			
+			
+			
+			str.append("product: ");
+			str.append(m_categories.get(0).getSubcategoryById(watch.getSubcategory()).getName());
 			
 			if (watch.getMustBeInStock()){
+				str.append(spaceStr);
+				
 				str.append("Must be in stock");
-				space = true;
 			}
 			
 			if (watch.getMaxPricePerRound() > 0){
-				if (space)
-					str.append("    ");
+				str.append(spaceStr);
 				
 				str.append("max price/rd: ");
 				str.append(GunbotUtils.centsToDollarStr(watch.getMaxPricePerRound()));
-				space = true;
 			}
-			else
-				space = false;
 			
 			if (watch.getMaxPrice() > 0){
-				if (space)
-					str.append("    ");
+				str.append(spaceStr);
 				
 				str.append("max price: ");
 				str.append(GunbotUtils.centsToDollarStr(watch.getMaxPrice()));
 			}
+			
+			for (int i = 0; i < watch.getTextFilterCount(); i++){
+				TextFilter filter = watch.getTextFilter(i);
+				str.append(spaceStr);
+				
+				if (filter.getFilterType() == TextFilter.CONTAINS)
+					str.append("contains text: ");
+				else
+					str.append("does not contain text: ");
+				
+				str.append(filter.getFilterText());
+			}
+			
 			return str.toString();
 		}
 	}

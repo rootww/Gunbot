@@ -123,8 +123,8 @@ public class GunbotProductWatch {
 	}
 	
 	public static class TextFilter{
-		public static final int CONTAINS = 1;
-		public static final int DOES_NOT_CONTAIN = 0;
+		public static final int CONTAINS = 0;
+		public static final int DOES_NOT_CONTAIN = 1;
 		
 		private int m_filterType;
 		private String m_filterText;
