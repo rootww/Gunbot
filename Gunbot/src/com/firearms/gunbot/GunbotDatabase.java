@@ -113,6 +113,27 @@ public class GunbotDatabase extends SQLiteOpenHelper{
 		return url;
 	}
 	
+	public void setAppInfo(String name, String value){
+		open();
+		
+		ContentValues v = new ContentValues();
+		v.put("value", value);
+		
+		m_database.update("app_data", v, "name = '"+name+"'", null);
+	}
+	
+	public String getAppInfo(String name, String defaultValue){
+		open();
+		String r = defaultValue;
+		
+		Cursor result = m_database.rawQuery("SELECT value from app_data where name = ?;", new String[]{name});
+		
+		if (result.moveToNext())
+			r = result.getString(0);
+		
+		return r;
+	}
+	
 	public void deleteProductWatchById(long id){
 		open();
 		m_database.delete("product_watches","id = ?;", new String[]{String.valueOf(id)});

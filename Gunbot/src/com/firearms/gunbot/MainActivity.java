@@ -33,6 +33,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity implements OnItemSelectedListener{
 	private static final String LOG_TAG = "MainActivity";
 	
+	private int m_defaultSubcategoryIndex = 0;
 	private int m_currentSubcategoryId = 0;
 	private GunbotDatabase m_database;
 	private List<GunbotCategory> m_categories;
@@ -40,12 +41,33 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 	boolean m_isUpdating;
 	
 	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		
+		initListView();
+		
+		m_database = new GunbotDatabase(getApplicationContext());
+		m_categories = m_database.getCategoryInformation();
+		m_defaultSubcategoryIndex = Integer.parseInt(m_database.getAppInfo("selected_subcategory", "0"));
+		m_products = m_database.getProducts(1, m_categories.get(0).getSubcategory(m_defaultSubcategoryIndex).getId());
+		
+		initSpinner();
+	}
+	
+	@Override
+	protected void onDestroy (){
+		super.onDestroy();
+		
+		m_database.close();
+	}
+	
+	@Override
 	public void onResume(){
 		super.onResume();
 		installBackgroundServiceIfNecessary();
 		
-		if (m_products != null)
-			filterAndSortProducts();
+		filterAndSortProducts();
 	}
 	
 	private List<GunbotProduct> getInStockProducts(){
@@ -110,30 +132,12 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 		Log.i(LOG_TAG,"Background service installed");
 	}
 	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		
-		initListView();
-		
-		m_database = new GunbotDatabase(getApplicationContext());
-		m_categories = m_database.getCategoryInformation();
-		initSpinner();
-	}
-	
-	@Override
-	protected void onDestroy (){
-		super.onDestroy();
-		
-		m_database.close();
-	}
-	
 	private void initSpinner(){
 		Spinner ammoSpinner = (Spinner) findViewById(R.id.ammo_selection);
-		GunbotCategory category = m_categories.get(m_currentSubcategoryId);
+		GunbotCategory category = m_categories.get(0);
 		ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, category.getSubcategoryNames());
 		ammoSpinner.setAdapter(spinnerArrayAdapter);
+		ammoSpinner.setSelection(m_defaultSubcategoryIndex);
 		ammoSpinner.setOnItemSelectedListener(this);
 	}
 
@@ -147,6 +151,8 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 		//this is called when the category spinner changes
 		m_currentSubcategoryId = m_categories.get(0).getSubcategory(pos).getId();
+		m_database.setAppInfo("selected_subcategory", String.valueOf(pos));
+		
 		doProductRefresh();
 	}
 	
