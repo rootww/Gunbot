@@ -1,5 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+   <PreferenceCategory 
+        android:title="@string/preference_projectlist_category"
+        android:key="preference_projectlist_category">
+        
+    <CheckBoxPreference
+        android:title="@string/preference_projectlist_outofstock"
+        android:key="preference_projectlist_outofstock"
+        android:defaultValue="false" />
+    
+     <ListPreference
+        android:key="preference_projectlist_sortmode"
+        android:title="@string/preference_projectlist_sortmode"
+        android:dialogTitle="@string/preference_projectlist_sortmode"
+        android:entries="@array/preference_projectlist_sortmode_choices"
+        android:entryValues="@array/preference_projectlist_sortmode_choices"
+        android:defaultValue="@string/preference_projectlist_sortmode_default" />
+     
+     <ListPreference
+        android:key="preference_projectlist_sortmode_direction"
+        android:title="@string/preference_projectlist_sortmode_direction"
+        android:dialogTitle="@string/preference_projectlist_sortmode_direction"
+        android:entries="@array/preference_projectlist_sortmode_direction_choices"
+        android:entryValues="@array/preference_projectlist_sortmode_direction_choices"
+        android:defaultValue="@string/preference_projectlist_sortmode_direction_default" />
+    
+    </PreferenceCategory>
+
     <PreferenceCategory 
         android:title="@string/preference_notification_category"
         android:key="preference_notification_category">

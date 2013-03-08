@@ -1,6 +1,10 @@
 package com.firearms.gunbot;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Vector;
+
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -39,6 +43,53 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 	public void onResume(){
 		super.onResume();
 		installBackgroundServiceIfNecessary();
+		
+		if (m_products != null)
+			filterAndSortProducts();
+	}
+	
+	private List<GunbotProduct> getInStockProducts(){
+		List<GunbotProduct> filteredProducts = new Vector<GunbotProduct>();
+		
+		for (GunbotProduct product : m_products){
+			if (product.isInStock())
+				filteredProducts.add(product);
+		}
+		
+		return filteredProducts;
+	}
+	
+	private void filterAndSortProducts(){
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		
+		final String sortMethod = preferences.getString("preference_projectlist_sortmode", getResources().getString(R.string.preference_projectlist_sortmode_default));
+		final String[] sortOptions = getResources().getStringArray(R.array.preference_projectlist_sortmode_choices);
+		List<GunbotProduct> filteredProducts = null;
+		
+		if (preferences.getBoolean("preference_projectlist_outofstock", false))
+			filteredProducts = m_products;
+		else
+			filteredProducts = getInStockProducts();
+		
+		Collections.sort(filteredProducts, new Comparator<GunbotProduct>() {
+	        @Override
+	        public int compare(GunbotProduct p1, GunbotProduct p2) {
+	        	if (sortMethod.equals(sortOptions[0]))
+	        		return p1.getDescription().compareTo(p2.getDescription());
+	        	else if (sortMethod.equals(sortOptions[1]))
+	        		return Integer.valueOf(p1.getPricePerRound()).compareTo(Integer.valueOf(p2.getPricePerRound()));
+	        	else
+	        		return Integer.valueOf(p1.getTotalPrice()).compareTo(Integer.valueOf(p2.getTotalPrice()));
+	        }});
+		
+		String defaultSortDirection = getResources().getString(R.string.preference_projectlist_sortmode_direction_default);
+		String sortDirection = preferences.getString("preference_projectlist_sortmode_direction", defaultSortDirection);
+		
+		if (!sortDirection.equals(defaultSortDirection))
+			Collections.reverse(filteredProducts);
+		
+		ListView listView = (ListView) findViewById(R.id.ammo_list);
+		listView.setAdapter(new GunbotProductWatchAdapter(this, R.layout.product_list_item, filteredProducts));
 	}
 	
 	private void installBackgroundServiceIfNecessary(){
@@ -181,13 +232,11 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 		
 		@Override
 		protected void onPostExecute(Void result) {
-			if (m_fetchSuccess){
-				ListView listView = (ListView) findViewById(R.id.ammo_list);
-				listView.setAdapter(new GunbotProductWatchAdapter(m_activityContext, R.layout.product_list_item, m_products));
-			}
-			else{
+			if (m_fetchSuccess)
+				filterAndSortProducts();
+			else
 				Toast.makeText(getApplicationContext(), m_errorMessage, Toast.LENGTH_SHORT).show();
-			}
+			
 	     }
 
 		

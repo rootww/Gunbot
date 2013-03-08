@@ -1,5 +1,23 @@
 <resources>
-<string name="preference_notification_category">Notifications</string>
+    <string name="preference_projectlist_category">Product List</string>
+    <string name="preference_projectlist_outofstock">Include out of stock items</string>
+    <string name="preference_projectlist_sortmode">Sort mode</string>
+    <string name="preference_projectlist_sortmode_default">Price per round</string>
+    <string name="preference_projectlist_sortmode_direction">Sort Direction</string>
+    <string name="preference_projectlist_sortmode_direction_default">Ascending</string>
+    
+    <string-array name="preference_projectlist_sortmode_choices">
+        <item>Name</item>
+        <item>Price per round</item>
+        <item>Total price</item>
+    </string-array>
+    
+    <string-array name="preference_projectlist_sortmode_direction_choices">
+        <item>Ascending</item>
+        <item>Descending</item>
+    </string-array>
+    
+	<string name="preference_notification_category">Notifications</string>
     <string name="preference_notification">Receive notifications</string>
     <string name="preference_notification_sound">Play notification sound</string>
     <string name="preference_notification_vibrate">Vibrate on notification</string>
